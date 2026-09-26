@@ -1,23 +1,28 @@
-const { searchFAQs } = require("./faqService");
+const { GoogleGenAI } = require("@google/genai");
+
+const ai = new GoogleGenAI({
+  apiKey: process.env.GEMINI_API_KEY,
+});
 
 const generateAnswer = async (question) => {
-  const faqs = await searchFAQs(question);
+  try {
+    const response = await ai.models.generateContent({
+  model: "gemini-3.5-flash",
+  contents: question,
+});
 
-  if (!faqs || faqs.length === 0) {
     return {
-      answer: "Sorry, I could not find a relevant FAQ for your question.",
-      source: "FAQ Database",
+      answer: response.text,
+      source: "Google Gemini AI",
+    };
+  } catch (error) {
+    console.error("Gemini API Error:", error.message);
+
+    return {
+      answer: "Sorry, I could not generate an answer at the moment.",
+      source: "Google Gemini AI",
     };
   }
-
-  const bestFAQ = faqs[0];
-
-  return {
-    answer: bestFAQ.answer,
-    source: "FAQ Database",
-    faqId: bestFAQ._id,
-    category: bestFAQ.category,
-  };
 };
 
 module.exports = {
