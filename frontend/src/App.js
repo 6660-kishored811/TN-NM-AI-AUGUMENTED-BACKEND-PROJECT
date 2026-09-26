@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import ReactMarkdown from "react-markdown";
 import Auth from "./Auth";
 import AdminDashboard from "./AdminDashboard";
 import "./App.css";
@@ -25,7 +26,7 @@ function App() {
   const [faqCount, setFaqCount] = useState(0);
 
   useEffect(() => {
-    if (!isLoggedIn || role === "admin") {
+    if (!isLoggedIn || role === "admin" || role === "creator") {
       return;
     }
 
@@ -87,13 +88,21 @@ function App() {
       const data = await response.json();
 
       if (data.success) {
-        setAnswer(data.answer);
+        setAnswer(
+          data.error
+            ? `${data.answer}\n\nDebug Error: ${data.error}`
+            : data.answer
+        );
+
         setSource(data.source || "");
         setCategory(data.category || "");
       } else {
-        setAnswer("Sorry, something went wrong.");
+        setAnswer(
+          data.message || "Sorry, something went wrong."
+        );
       }
     } catch (error) {
+      console.error("AI request failed:", error);
       setAnswer("Unable to connect to the server.");
     }
 
@@ -119,7 +128,7 @@ function App() {
             "Content-Type": "application/json",
           },
           body: JSON.stringify({
-            question: question,
+            question: question.trim(),
           }),
         }
       );
@@ -127,13 +136,21 @@ function App() {
       const data = await response.json();
 
       if (data.success) {
-        setAnswer(data.answer);
+        setAnswer(
+          data.error
+            ? `${data.answer}\n\nDebug Error: ${data.error}`
+            : data.answer
+        );
+
         setSource(data.source || "");
         setCategory(data.category || "");
       } else {
-        setAnswer("Sorry, something went wrong.");
+        setAnswer(
+          data.message || "Sorry, something went wrong."
+        );
       }
     } catch (error) {
+      console.error("AI request failed:", error);
       setAnswer("Unable to connect to the server.");
     }
 
@@ -152,7 +169,7 @@ function App() {
             );
           }}
         />
-      ) : role === "admin" ? (
+      ) : role === "admin" || role === "creator" ? (
         <AdminDashboard />
       ) : (
         <div className="container">
@@ -170,11 +187,11 @@ function App() {
           </p>
 
           <p className="subtitle">
-            Ask your questions and get answers from our FAQ database.
+            Ask your questions and get AI-powered answers.
           </p>
 
           <div className="status-badge">
-            ● FAQ Assistant Online
+            ● AI FAQ Assistant Online
           </div>
 
           <div className="faq-count-card">
@@ -255,7 +272,7 @@ function App() {
 
           {loading && (
             <div className="loading-text">
-              Searching FAQ Database...
+              AI is thinking...
             </div>
           )}
 
@@ -263,7 +280,9 @@ function App() {
             <div className="answer-box">
               <h2>Answer</h2>
 
-              <p>{answer}</p>
+              <ReactMarkdown>
+                {answer}
+              </ReactMarkdown>
 
               {source && (
                 <small>

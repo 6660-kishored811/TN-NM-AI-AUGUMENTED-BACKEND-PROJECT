@@ -550,3 +550,30 @@ h1 {
   letter-spacing: 0.5px;
   box-shadow: 0 0 15px rgba(0, 255, 179, 0.12);
 }
+
+/* AI FAQ Generator Button */
+.ai-generate-button {
+  margin-top: 15px;
+  padding: 14px 28px;
+  border: 1px solid #00e5ff;
+  border-radius: 10px;
+  background: linear-gradient(135deg, #00e5ff, #7b61ff);
+  color: #ffffff;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 0 15px rgba(0, 229, 255, 0.25);
+}
+
+.ai-generate-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 0 25px rgba(0, 229, 255, 0.5);
+}
+
+.ai-generate-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
